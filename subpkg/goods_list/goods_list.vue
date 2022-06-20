@@ -1,27 +1,78 @@
 <template>
-	<view>
-		
-	</view>
+  <view>
+    <view class="goods-list">
+      <block v-for="(goods, i) in goodsList" :key="i">
+        <my-goods :goods="goods"></my-goods>
+      </block>
+    </view>
+  </view>
 </template>
 
 <script>
 	export default {
 		data() {
 			return {
-				query: {}
+				queryObj: {
+					// 查询关键词
+					query: '',
+					// 商品分类Id
+					cid: '',
+					// 页码值
+					pagenum: 1,
+					// 每页显示多少条数据
+					pagesize: 10
+				},
+				goodsList: [],
+				total: 0,
+				isloading: false
 			};
 		},
 		onLoad(options) {
 			// 接收参数
-			this.query = options
-			// 动态设置当前商品标题
-			uni.setNavigationBarTitle({
-				title: options.query
-			})
+			this.queryObj.query = options.query || ''
+			this.queryObj.cid = options.cid || ''
+			
+			this.getGoodsList()
+		},
+		methods: {
+			// 获取商品列表数据
+			async getGoodsList (cb) {
+				// 打开节流阀
+				this.isloading = true
+				const { data: res } = await uni.$http.get('/api/public/v1/goods/search', this.queryObj)
+				// 关闭节流阀
+				this.isloading = false
+				// 只要数据请求完毕，就立即按需调用 cb 回调函数
+				cb && cb()
+				
+				if (res.meta.status !== 200) return uni.$showMsg()
+				this.goodsList = [...this.goodsList, ...res.message.goods]
+				this.total = res.message.total
+			},
+			// 触底的事件
+			onReachBottom() {
+				// 判断是否还有下一页数据
+				if (this.queryObj.pagenum * this.queryObj.pagesize >= this.total) return uni.$showMsg('数据加载完毕！')
+				
+				// 如果正在请求其它数据，则不发起额外的请求
+				if (this.isloading) return
+				
+			  this.queryObj.pagenum += 1
+			  this.getGoodsList()
+			},
+			// 下拉刷新的事件
+			onPullDownRefresh() {
+			  this.queryObj.pagenum = 1
+			  this.total = 0
+			  this.isloading = false
+			  this.goodsList = []
+			
+			  this.getGoodsList(() => uni.stopPullDownRefresh())
+			},
 		}
 	}
 </script>
 
 <style lang="scss">
-
+	
 </style>
