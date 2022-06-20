@@ -1,5 +1,9 @@
 <template>
   <view>
+		<view class="search-box">
+		  <my-search @click="gotoSearch"></my-search>
+		</view>
+		
     <view class="scroll-view-container">
       <!-- 左侧分类 -->
       <scroll-view class="left-scroll-view" scroll-y :style="{height: wh + 'px'}">
@@ -43,6 +47,12 @@
 			this.getCateList()
 		},
 		methods: {
+			// 搜索框跳转
+			gotoSearch() {
+			  uni.navigateTo({
+			    url: '/subpkg/search/search'
+			  })
+			},
 			// 获取左侧分类数据
 			async getCateList() {
 				const { data: res } = await uni.$http.get('/api/public/v1/categories')
@@ -80,6 +90,13 @@
 </script>
 
 <style lang="scss">
+	// 搜索框
+	.search-box {
+	  position: sticky;
+	  top: 0;
+	  z-index: 999;
+	}
+	
 	.scroll-view-container {
 	  display: flex;
 		
