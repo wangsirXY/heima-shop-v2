@@ -39,17 +39,15 @@
 						"navigationBarTitleText": "商品详情页",
 						"enablePullDownRefresh": false
 					}
+				},
+				{
+					"path": "goods_list/goods_list",
+					"style": {
+						"navigationBarTitleText": "商品列表",
+						"enablePullDownRefresh": false
+					}
 				}
-			    ,{
-                    "path" : "goods_list/goods_list",
-                    "style" :                                                                                    
-                {
-                    "navigationBarTitleText": "商品列表",
-                    "enablePullDownRefresh": false
-                }
-                
-                }
-            ]
+			]
 		}
 	],
 	"globalStyle": {
